@@ -4,7 +4,7 @@ export default defineAstroPaperConfig({
   site: {
     url: "https://blog.yuulee521.com/",
     title: "yuulee's blog",
-    description: "技术笔记与随想",
+    description: "Tech notes and random thoughts",
     author: "yuulee",
     profile: "https://blog.yuulee521.com/",
     ogImage: "default-og.jpg",

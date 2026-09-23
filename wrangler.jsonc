@@ -2,14 +2,14 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "yuulee-blog",
   "compatibility_date": "2026-09-01",
-  // wrangler deploy 前先构建，不依赖后台 Build command 设置
+  // Build before wrangler deploy, independent of the dashboard Build command setting
   "build": { "command": "npm run build" },
-  // 纯静态站：只上传 dist，不跑 Worker 代码
+  // Pure static site: only upload dist, no Worker code
   "assets": {
     "directory": "./dist",
     "not_found_handling": "404-page",
   },
-  // 只通过自定义域名访问，关掉 *.workers.dev
+  // Only reachable via the custom domain; disable *.workers.dev
   "workers_dev": false,
   "routes": [{ "pattern": "blog.yuulee521.com", "custom_domain": true }],
 }

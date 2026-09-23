@@ -4,7 +4,7 @@ title: Hello World
 featured: true
 tags:
   - misc
-description: 博客的第一篇文章。
+description: The first post on this blog.
 ---
 
-博客开张了 🎉 基于 [Astro](https://astro.build/) + [AstroPaper](https://github.com/satnaing/astro-paper)，托管在 Cloudflare Pages。
+The blog is open 🎉 Built with [Astro](https://astro.build/) + [AstroPaper](https://github.com/satnaing/astro-paper), hosted on Cloudflare Workers.
