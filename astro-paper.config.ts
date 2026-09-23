@@ -9,7 +9,7 @@ export default defineAstroPaperConfig({
     profile: "https://blog.yuulee521.com/",
     ogImage: "default-og.jpg",
     lang: "en",
-    timezone: "Asia/Shanghai",
+    timezone: "Europe/Amsterdam",
     dir: "ltr",
   },
   posts: {
