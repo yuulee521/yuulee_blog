@@ -1,0 +1,13 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "yuulee-blog",
+  "compatibility_date": "2026-09-01",
+  // 纯静态站：只上传 dist，不跑 Worker 代码
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page",
+  },
+  // 只通过自定义域名访问，关掉 *.workers.dev
+  "workers_dev": false,
+  "routes": [{ "pattern": "blog.yuulee521.com", "custom_domain": true }],
+}
