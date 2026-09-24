@@ -4,11 +4,18 @@
   "compatibility_date": "2026-09-01",
   // Build before wrangler deploy, independent of the dashboard Build command setting
   "build": { "command": "npm run build" },
-  // Pure static site: only upload dist, no Worker code
+  // Worker only handles /api/* (views & likes); everything else is static assets
+  "main": "./worker/index.ts",
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
     "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*"],
   },
+  // D1 database for post views & likes. No database_id: wrangler auto-provisions
+  // it on first deploy and keeps the binding linked by name afterwards.
+  "d1_databases": [{ "binding": "DB", "database_name": "yuulee-blog" }],
+  "observability": { "enabled": true },
   // Only reachable via the custom domain; disable *.workers.dev
   "workers_dev": false,
   "routes": [{ "pattern": "blog.yuulee521.com", "custom_domain": true }],

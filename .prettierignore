@@ -14,4 +14,4 @@
 !.vscode
 
 # Ignore MDX files
-*.mdx
+*.mdxworker/worker-configuration.d.ts

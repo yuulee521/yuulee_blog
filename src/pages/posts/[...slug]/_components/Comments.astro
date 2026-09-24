@@ -1,0 +1,85 @@
+---
+import { useTranslations } from "@/i18n";
+
+/**
+ * Giscus comments, backed by GitHub Discussions of the blog repo.
+ * Get repoId / categoryId from https://giscus.app (or `gh api graphql`).
+ */
+const giscus = {
+  repo: "yuulee521/yuulee_blog",
+  repoId: "R_kgDOUn7PfA",
+  category: "Announcements",
+  categoryId: "DIC_kwDOUn7PfM4DGUWo",
+};
+
+const t = useTranslations(Astro.currentLocale);
+const enabled = Boolean(giscus.repoId && giscus.categoryId);
+---
+
+{
+  enabled && (
+    <section class="my-8" aria-label={t.post.comments}>
+      <div
+        data-giscus-container
+        data-repo={giscus.repo}
+        data-repo-id={giscus.repoId}
+        data-category={giscus.category}
+        data-category-id={giscus.categoryId}
+      />
+    </section>
+  )
+}
+
+<script>
+  const ORIGIN = "https://giscus.app";
+
+  const currentTheme = () =>
+    document.documentElement.getAttribute("data-theme") === "dark"
+      ? "dark"
+      : "light";
+
+  function mount() {
+    const container = document.querySelector<HTMLElement>(
+      "[data-giscus-container]"
+    );
+    if (!container || container.childElementCount > 0) return;
+
+    const { repo, repoId, category, categoryId } = container.dataset;
+    const script = document.createElement("script");
+    script.src = `${ORIGIN}/client.js`;
+    script.async = true;
+    script.crossOrigin = "anonymous";
+    Object.entries({
+      repo,
+      repoId,
+      category,
+      categoryId,
+      mapping: "pathname",
+      strict: "1",
+      reactionsEnabled: "1",
+      emitMetadata: "0",
+      inputPosition: "top",
+      theme: currentTheme(),
+      lang: document.documentElement.lang || "en",
+      loading: "lazy",
+    }).forEach(([key, value]) => {
+      script.dataset[key] = value ?? "";
+    });
+    container.appendChild(script);
+  }
+
+  // Keep the giscus iframe in sync with the site's light/dark toggle.
+  new MutationObserver(() => {
+    document
+      .querySelector<HTMLIFrameElement>("iframe.giscus-frame")
+      ?.contentWindow?.postMessage(
+        { giscus: { setConfig: { theme: currentTheme() } } },
+        ORIGIN
+      );
+  }).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["data-theme"],
+  });
+
+  document.addEventListener("astro:page-load", mount);
+</script>

@@ -21,6 +21,11 @@ export default {
     editPage: "Edit page",
     previousPost: "Previous Post",
     nextPost: "Next Post",
+    views: "views",
+    likePrompt: "Was this post helpful?",
+    like: "Like this post",
+    unlike: "Unlike this post",
+    comments: "Comments",
   },
   pagination: {
     prev: "Prev",

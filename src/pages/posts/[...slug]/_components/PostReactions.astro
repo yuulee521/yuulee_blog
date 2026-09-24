@@ -1,0 +1,107 @@
+---
+import IconHeart from "@/assets/icons/IconHeart.svg";
+import { useTranslations } from "@/i18n";
+
+type Props = { slug: string };
+
+const { slug } = Astro.props;
+const t = useTranslations(Astro.currentLocale);
+---
+
+<!-- Hidden until /api/view responds, so it never shows a broken button
+     (e.g. under `astro dev`, which has no Worker API). -->
+<div
+  data-post-reactions
+  data-pagefind-ignore
+  hidden
+  class="my-8 flex-col items-center gap-3"
+>
+  <span class="text-muted-foreground italic">{t.post.likePrompt}</span>
+  <button
+    type="button"
+    data-like-btn
+    data-slug={slug}
+    data-label-like={t.post.like}
+    data-label-unlike={t.post.unlike}
+    aria-pressed="false"
+    aria-label={t.post.like}
+    class="group border-border hover:border-accent hover:text-accent aria-pressed:border-accent aria-pressed:text-accent flex items-center gap-2 rounded-full border-2 px-5 py-2 transition-colors disabled:opacity-60"
+  >
+    <IconHeart
+      class="size-6 transition-transform group-active:scale-125 group-aria-pressed:fill-current"
+    />
+    <span data-count class="min-w-[1ch] font-medium tabular-nums">0</span>
+  </button>
+</div>
+
+<style>
+  [data-post-reactions]:not([hidden]) {
+    display: flex;
+  }
+</style>
+
+<script>
+  type Stats = { views: number; likes: number; liked: boolean };
+
+  const format = new Intl.NumberFormat();
+
+  function apiUrl(action: "view" | "like", slug: string) {
+    const path = slug
+      .split("/")
+      .filter(Boolean)
+      .map(encodeURIComponent)
+      .join("/");
+    return `/api/${action}/${path}`;
+  }
+
+  async function call(url: string, method: "POST" | "DELETE") {
+    try {
+      const res = await fetch(url, { method });
+      return res.ok ? ((await res.json()) as Stats) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function render(button: HTMLButtonElement, stats: Stats) {
+    const views = document.querySelector<HTMLElement>("[data-post-views]");
+    if (views) {
+      views.querySelector("[data-count]")!.textContent = format.format(
+        stats.views
+      );
+      views.hidden = false;
+    }
+
+    button.querySelector("[data-count]")!.textContent = format.format(
+      stats.likes
+    );
+    button.setAttribute("aria-pressed", String(stats.liked));
+    button.setAttribute(
+      "aria-label",
+      (stats.liked ? button.dataset.labelUnlike : button.dataset.labelLike) ??
+        ""
+    );
+    button.closest<HTMLElement>("[data-post-reactions]")!.hidden = false;
+  }
+
+  async function init() {
+    const button = document.querySelector<HTMLButtonElement>("[data-like-btn]");
+    const slug = button?.dataset.slug;
+    if (!button || !slug) return;
+
+    const stats = await call(apiUrl("view", slug), "POST");
+    if (!stats) return;
+    render(button, stats);
+
+    button.addEventListener("click", async () => {
+      const liked = button.getAttribute("aria-pressed") === "true";
+      button.disabled = true;
+      const next = await call(apiUrl("like", slug), liked ? "DELETE" : "POST");
+      if (next) render(button, next);
+      button.disabled = false;
+    });
+  }
+
+  // Runs on first load and after every View Transitions navigation.
+  document.addEventListener("astro:page-load", init);
+</script>

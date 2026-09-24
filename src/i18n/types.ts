@@ -19,6 +19,11 @@ export interface UIStrings {
     editPage: string;
     previousPost: string;
     nextPost: string;
+    views: string;
+    likePrompt: string;
+    like: string;
+    unlike: string;
+    comments: string;
   };
   pagination: {
     prev: string;

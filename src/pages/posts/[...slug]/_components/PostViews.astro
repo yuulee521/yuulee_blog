@@ -1,0 +1,28 @@
+---
+import IconEye from "@/assets/icons/IconEye.svg";
+import { useTranslations } from "@/i18n";
+
+type Props = { class?: string };
+
+const { class: className = "" } = Astro.props;
+const t = useTranslations(Astro.currentLocale);
+---
+
+<!-- Filled in by PostReactions.astro once /api/view responds; hidden otherwise. -->
+<span
+  data-post-views
+  data-pagefind-ignore
+  hidden
+  class:list={["text-muted-foreground items-center gap-1.5", className]}
+>
+  <IconEye class="inline-block size-5" />
+  <span class="text-sm sm:text-base">
+    <span data-count></span>{" "}{t.post.views}
+  </span>
+</span>
+
+<style>
+  [data-post-views]:not([hidden]) {
+    display: inline-flex;
+  }
+</style>
